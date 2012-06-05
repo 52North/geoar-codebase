@@ -27,46 +27,34 @@ package org.n52.ar.geoarCodebase.resources;
 import java.io.File;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 import org.n52.ar.geoarCodebase.CodebaseApplication;
 import org.n52.ar.geoarCodebase.CodebaseDatabase;
+import org.n52.ar.geoarCodebase.util.CodebaseProperties;
 import org.restlet.data.Disposition;
 import org.restlet.data.MediaType;
-import org.restlet.data.Parameter;
 import org.restlet.data.Reference;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
-import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ApkFileResource extends ServerResource {
 
-    private static Logger log = LoggerFactory.getLogger(ApkFileResource.class);
-
     private static final String APK_MEDIA_TYPE_NAME = "application/vnd.android.package-archive";
-
-    private static final String APK_FILE_EXTENSION = "apk";
-
-    private static final String MSG_ID_NOT_FOUND = "No resource with the given ID in this codebase!";
-
-    private static final String CODEBASE_PATH_CONTEXT_PARAM = "codebasePath";
 
     private static MediaType APPLICATION_APK = new MediaType(APK_MEDIA_TYPE_NAME,
                                                              "Android Package management system, file archive");
 
-    private String id;
+    private static Logger log = LoggerFactory.getLogger(ApkFileResource.class);
 
-    private String codebasePath;
+    private static final String MSG_ID_NOT_FOUND = "No resource with the given ID in this codebase!";
+
+    private String id;
 
     public ApkFileResource() {
         log.info("NEW {}", this);
-
-        Series<Parameter> parameters = getApplication().getContext().getParameters();
-        this.codebasePath = parameters.getFirstValue(CODEBASE_PATH_CONTEXT_PARAM, true);
     }
 
     @Override
@@ -78,6 +66,8 @@ public class ApkFileResource extends ServerResource {
 
         this.id = (String) requestAttributes.get(CodebaseApplication.PARAM_ID);
         log.debug("Id: {} {}", this.id);
+
+        CodebaseProperties.getInstance(getApplication());
     }
 
     @Override
@@ -85,31 +75,20 @@ public class ApkFileResource extends ServerResource {
         if ( !CodebaseDatabase.getInstance().containsResource(this.id))
             throw new RuntimeException(MSG_ID_NOT_FOUND);
 
-        String path = getApkPath(id);
+        String path = CodebaseProperties.getInstance().getApkPath(this.id);
         File apkFile = new File(path);
 
-        if (apkFile == null || !apkFile.exists()) {
+        if (!apkFile.exists()) {
             log.error("Could not load apk file from " + apkFile);
             throw new RuntimeException("Could not load file " + apkFile.getName());
         }
 
         Representation representation = new FileRepresentation(apkFile, APPLICATION_APK);
         Disposition disposition = representation.getDisposition();
-        disposition.setFilename(getFilename(this.id));
+        disposition.setFilename(CodebaseProperties.getFilename(this.id));
         disposition.setType(Disposition.TYPE_ATTACHMENT);
 
         return representation;
-    }
-
-    private String getFilename(String id) {
-        return id + "." + APK_FILE_EXTENSION;
-    }
-
-    private String getApkPath(String id) {
-        ServletContext sc = (ServletContext) getContext().getAttributes().get("org.restlet.ext.servlet.ServletContext");
-        String realPath = sc.getRealPath(this.codebasePath + "/" + getFilename(id));
-
-        return realPath;
     }
 
 }

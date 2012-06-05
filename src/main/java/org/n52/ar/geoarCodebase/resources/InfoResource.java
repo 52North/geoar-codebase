@@ -24,21 +24,30 @@
 
 package org.n52.ar.geoarCodebase.resources;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.io.FilenameUtils;
 import org.n52.ar.geoarCodebase.CodebaseApplication;
 import org.n52.ar.geoarCodebase.CodebaseDatabase;
 import org.n52.ar.geoarCodebase.ds.Datasource;
+import org.n52.ar.geoarCodebase.util.CodebaseProperties;
 import org.n52.ar.geoarCodebase.util.HtmlHelper;
 import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;
 import org.restlet.data.Reference;
+import org.restlet.data.Status;
+import org.restlet.ext.fileupload.RestletFileUpload;
 import org.restlet.ext.jackson.JacksonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
@@ -47,29 +56,33 @@ import org.slf4j.LoggerFactory;
 
 public class InfoResource extends ServerResource {
 
-    private static final String MSG_NO_LINK = "No download link available.";
-
-    private static final String SERVICE_URL_CONTEXT_PARAM = "serviceUrl";
-
     private static final String CODEBASE_PATH_CONTEXT_PARAM = "codebase";
 
-    private static final String URL_APK_PATH = "apk";
-
-    private static final String SERVICE_INFO_CONTEXT_PARAM = "serviceInfo";
-
-    private static final Object MSG_NO_RESULT = "No results matching your input!";
+    private static final Object FORM_FILE_INPUT_NAME = "fileToUpload";
 
     private static Logger log = LoggerFactory.getLogger(InfoResource.class);
 
-    private Collection<Datasource> resources;
+    private static final String MSG_NO_LINK = "No download link available.";
 
-    private String id = null;
+    private static final Object MSG_NO_RESULT = "No results matching your input!";
 
-    private String downloadUrlPrefix;
+    private static final String SERVICE_INFO_CONTEXT_PARAM = "serviceInfo";
+
+    private static final String SERVICE_URL_CONTEXT_PARAM = "serviceUrl";
+
+    private static final String URL_APK_PATH = "apk";
 
     private String downloadUrlPostfix;
 
+    private String downloadUrlPrefix;
+
+    private String id = null;
+
+    private Collection<Datasource> resources;
+
     private String serviceInfo;
+
+    private boolean uploadAuthorized = false;
 
     public InfoResource() {
         log.info("NEW {}", this);
@@ -79,6 +92,96 @@ public class InfoResource extends ServerResource {
                 + CODEBASE_PATH_CONTEXT_PARAM + "/";
         this.downloadUrlPostfix = "/" + URL_APK_PATH;
         this.serviceInfo = parameters.getFirstValue(SERVICE_INFO_CONTEXT_PARAM, true);
+
+        CodebaseProperties.getInstance(getApplication());
+    }
+
+    /**
+     * Accepts and processes a representation posted to the resource. As response, the content of the uploaded
+     * file is sent back the client.
+     * 
+     * See http://wiki.restlet.org/docs_2.2/13-restlet/28-restlet/64-restlet.html
+     */
+    @Post
+    public Representation acceptPost(Representation entity) throws Exception {
+        Representation rep = null;
+        if (entity != null) {
+            if (MediaType.MULTIPART_FORM_DATA.equals(entity.getMediaType(), true)) {
+                String fileName = null;
+
+                // 1/ Create a factory for disk-based file items
+                DiskFileItemFactory factory = new DiskFileItemFactory();
+                factory.setSizeThreshold(1000240);
+
+                // 2/ Create a new file upload handler based on the Restlet FileUpload extension that will
+                // parse Restlet requests and generates FileItems.
+                RestletFileUpload upload = new RestletFileUpload(factory);
+                List<FileItem> items;
+
+                // 3/ Request is parsed by the handler which generates a list of FileItems
+                items = upload.parseRequest(getRequest());
+
+                // Process only the uploaded item called "fileToUpload" and save it on disk
+                boolean found = false;
+
+                for (FileItem fi : items) {
+                    if (fi.getFieldName().equals(FORM_FILE_INPUT_NAME)) {
+                        found = true;
+                        String name = fi.getName();
+                        if ( !FilenameUtils.getExtension(name).equals(CodebaseProperties.APK_FILE_EXTENSION)) {
+                            rep = new StringRepresentation("Only accept .apk files!", MediaType.TEXT_PLAIN);
+                            return rep;
+                        }
+
+                        this.id = FilenameUtils.getBaseName(name);
+
+                        // clean up and handle database entry
+                        CodebaseDatabase db = CodebaseDatabase.getInstance();
+                        boolean databaseEntryExists = db.containsResource(this.id);
+                        fileName = CodebaseProperties.getInstance().getApkPath(this.id);
+                        File file = new File(fileName);
+                        boolean fileExists = file.exists();
+
+                        if (databaseEntryExists != fileExists) {
+                            log.error("Found either database entry or file, bot not both! database: {} - file: {}",
+                                      Boolean.valueOf(databaseEntryExists),
+                                      Boolean.valueOf(fileExists));
+                        }
+
+                        if (fileExists) {
+                            log.warn("Replacing apk file for " + this.id);
+                            boolean deleted = file.delete();
+                            if ( !deleted)
+                                log.error("Could not delete file " + fileName);
+                        }
+                        if ( !databaseEntryExists) {
+                            db.addResource(this.id, this.id + "_name", "no description", null);
+                        }
+
+                        // write it!
+                        fi.write(file);
+
+                        break;
+                    }
+                }
+
+                // sent info back to the client.
+                if (found) {
+                    rep = new StringRepresentation("Uploaded file to " + fileName + ".", MediaType.TEXT_PLAIN);
+                }
+                else {
+                    rep = new StringRepresentation("No file uploaded.", MediaType.TEXT_PLAIN);
+                }
+            }
+        }
+        else {
+            // POST request with no entity.
+            setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+
+            log.error("POST without multipart content.");
+        }
+
+        return rep;
     }
 
     @Override
@@ -90,6 +193,13 @@ public class InfoResource extends ServerResource {
 
         this.id = (String) requestAttributes.get(CodebaseApplication.PARAM_ID);
         log.debug("Id: {} {}", this.id);
+
+        String token = getQueryValue(CodebaseApplication.PARAM_TOKEN);
+        log.debug("Token: {}", token);
+
+        if (token != null && token.equals(CodebaseProperties.getInstance().getUploadToken()))
+            this.uploadAuthorized = true;
+        log.debug("Upload authorized: {}", Boolean.valueOf(this.uploadAuthorized));
 
         // if there is no id given, then return all! > simply return codebase/index.json file!
         if (this.id == null)
@@ -107,8 +217,7 @@ public class InfoResource extends ServerResource {
     }
 
     private String generateDownloadLink(Datasource ds) {
-
-        return downloadUrlPrefix + ds.getId() + this.downloadUrlPostfix;
+        return this.downloadUrlPrefix + ds.getId() + this.downloadUrlPostfix;
     }
 
     @Get("html")
@@ -152,6 +261,26 @@ public class InfoResource extends ServerResource {
                 sb.append("</p>");
                 sb.append("</div>");
             }
+        }
+
+        if (this.uploadAuthorized) {
+            sb.append("<h1>");
+            sb.append("Upload");
+            sb.append("</h1>");
+            sb.append("<form method=\"post\" ");
+            sb.append("action=\"");
+            sb.append(getReference());
+            sb.append("\" ");
+            sb.append("enctype=\"multipart/form-data\">");
+            sb.append("<label for=\"male\">File:  </label>");
+            sb.append("<input name=\"");
+            sb.append(FORM_FILE_INPUT_NAME);
+            sb.append("\" type=\"file\"/>");
+            // sb.append("<br /><label for=\"male\">Token: </label>");
+            // sb.append("<input name=\"token\" type=\"text\"/>");
+            sb.append("<input type=\"submit\"/>");
+            sb.append("</form>");
+            sb.append("<p>Upload .apk files here. New files (i.e. files with a name that does not exist as an id already) will get dummy names and descriptions, if the file is named _&lt;id&gt;.apk then the existing file is replaced.</p>");
         }
 
         s = HtmlHelper.afterResult();

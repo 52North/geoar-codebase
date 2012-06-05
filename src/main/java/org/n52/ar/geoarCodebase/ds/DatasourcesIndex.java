@@ -28,33 +28,42 @@ import java.util.Collection;
 
 public class DatasourcesIndex {
 
-    private String id;
-
     private Collection<Datasource> datasources;
 
-    public String getId() {
-        return id;
+    private String id;
+
+    public DatasourcesIndex() {
+        // required by Jackson
     }
 
-    public void setId(String id) {
+    public DatasourcesIndex(String id, Collection<Datasource> datasources) {
         this.id = id;
+        this.datasources = datasources;
     }
 
     public Collection<Datasource> getDatasources() {
-        return datasources;
+        return this.datasources;
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     public void setDatasources(Collection<Datasource> datasources) {
         this.datasources = datasources;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("DatasourcesIndex [id=");
-        builder.append(id);
+        builder.append(this.id);
         builder.append(", datasources=");
-        builder.append(datasources);
+        builder.append(this.datasources);
         builder.append("]");
         return builder.toString();
     }

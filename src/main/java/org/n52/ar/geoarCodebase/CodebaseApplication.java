@@ -34,16 +34,18 @@ import org.slf4j.LoggerFactory;
 
 public class CodebaseApplication extends Application {
 
-    Logger log = LoggerFactory.getLogger(CodebaseApplication.class);
-
     public static final String PARAM_ID = "id";
+
+    public static final String PARAM_TOKEN = "token";
 
     private static final String ROUTE_BASE = "/";
 
+    private static final String ROUTE_APK = ROUTE_BASE + "{" + PARAM_ID + "}/apk";
+
     private static final String ROUTE_INFO = ROUTE_BASE + "{" + PARAM_ID + "}";
 
-    private static final String ROUTE_APK = ROUTE_BASE + "{" + PARAM_ID + "}/apk";
-    
+    private static Logger log = LoggerFactory.getLogger(CodebaseApplication.class);
+
     @Override
     public synchronized Restlet createInboundRoot() {
         log.debug("Creating new inbound root: " + this);
@@ -57,7 +59,7 @@ public class CodebaseApplication extends Application {
         router.attach(ROUTE_INFO + "/", InfoResource.class);
         router.attach(ROUTE_APK, ApkFileResource.class);
         router.attach(ROUTE_APK + "/", ApkFileResource.class);
-        
+
         return router;
     }
 

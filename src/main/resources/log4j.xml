@@ -50,7 +50,7 @@
 	</logger>
 
 	<root>
-		<priority value="INFO" />
+		<priority value="DEBUG" />
 		<appender-ref ref="ConsoleAppender" />
 <!-- 		<appender-ref ref="RoFiAppender" /> -->
 	</root>

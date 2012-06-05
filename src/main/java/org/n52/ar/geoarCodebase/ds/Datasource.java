@@ -24,71 +24,74 @@
 
 package org.n52.ar.geoarCodebase.ds;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Datasource {
-
-    private String id;
-
-    private String name;
 
     private String description;
 
-    private String imageLink;
-
+    @JsonIgnore
     private String downloadLink;
 
-    public String getId() {
-        return id;
+    private String id;
+
+    private String imageLink;
+
+    private String name;
+
+    public String getDescription() {
+        return this.description;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getDownloadLink() {
+        return this.downloadLink;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String getImageLink() {
+        return this.imageLink;
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
+        return this.name;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getImageLink() {
-        return imageLink;
+    public void setDownloadLink(String downloadLink) {
+        this.downloadLink = downloadLink;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
 
-    public String getDownloadLink() {
-        return downloadLink;
-    }
-
-    public void setDownloadLink(String downloadLink) {
-        this.downloadLink = downloadLink;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Datasource [id=");
-        builder.append(id);
+        builder.append(this.id);
         builder.append(", name=");
-        builder.append(name);
+        builder.append(this.name);
         builder.append(", description=");
-        builder.append(description);
+        builder.append(this.description);
         builder.append(", imageLink=");
-        builder.append(imageLink);
+        builder.append(this.imageLink);
         builder.append(", downloadLink=");
-        builder.append(downloadLink);
+        builder.append(this.downloadLink);
         builder.append("]");
         return builder.toString();
     }

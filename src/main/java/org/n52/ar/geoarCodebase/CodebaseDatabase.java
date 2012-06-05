@@ -24,12 +24,15 @@
 
 package org.n52.ar.geoarCodebase;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -41,11 +44,24 @@ import org.slf4j.LoggerFactory;
 
 public class CodebaseDatabase {
 
-    private static Logger log = LoggerFactory.getLogger(CodebaseDatabase.class);
-
     private static final String INDEX_FILE = "/datasources.json";
 
     private static CodebaseDatabase instance;
+
+    private static Logger log = LoggerFactory.getLogger(CodebaseDatabase.class);
+
+    public static CodebaseDatabase getInstance() {
+        if (instance == null)
+            instance = new CodebaseDatabase();
+
+        return instance;
+    }
+
+    private boolean backupIndexFile = true;
+
+    private URL indexFile;
+
+    private String indexId;
 
     private HashMap<String, Datasource> resources = new HashMap<String, Datasource>();
 
@@ -56,24 +72,54 @@ public class CodebaseDatabase {
         init();
     }
 
+    public void addResource(String id, String name, String description, String imageLink) {
+        Datasource ds = new Datasource();
+        ds.setId(id);
+        ds.setName(name);
+        ds.setDescription(description);
+        ds.setImageLink(imageLink);
+
+        this.resources.put(id, ds);
+
+        saveResources();
+    }
+
+    public boolean containsResource(String id) {
+        return this.resources.containsKey(id);
+    }
+
+    public Collection<Datasource> getResource(String id) {
+        Collection<Datasource> coll = new ArrayList<Datasource>();
+        if (this.resources.containsKey(id))
+            coll.add(this.resources.get(id));
+        return coll;
+    }
+
+    public Collection<Datasource> getResources() {
+        return this.resources.values();
+    }
+
     private void init() {
         // get index file
-        InputStream indexFile = getClass().getResourceAsStream(INDEX_FILE);
+        this.indexFile = getClass().getResource(INDEX_FILE);
 
-        if (indexFile == null) {
+        if (this.indexFile == null) {
             log.error("Could not load index file from " + INDEX_FILE);
             return;
         }
+        log.info("Loaded index file: " + this.indexFile);
 
         // parse index file
         ObjectMapper mapper = MapperFactory.getMapper();
         try {
-            DatasourcesIndex index = mapper.readValue(indexFile, DatasourcesIndex.class);
+            DatasourcesIndex index = mapper.readValue(this.indexFile, DatasourcesIndex.class);
 
             Collection<Datasource> datasources = index.getDatasources();
             for (Datasource datasource : datasources) {
                 this.resources.put(datasource.getId(), datasource);
             }
+
+            this.indexId = index.getId();
 
             log.info("Loaded " + index);
         }
@@ -88,26 +134,39 @@ public class CodebaseDatabase {
         }
     }
 
-    public static CodebaseDatabase getInstance() {
-        if (instance == null)
-            instance = new CodebaseDatabase();
+    private void saveResources() {
+        ObjectMapper mapper = MapperFactory.getMapper();
 
-        return instance;
-    }
+        if (this.backupIndexFile) {
+            File old = new File(this.indexFile.getFile());
+            File backup = new File(old.getAbsolutePath() + "_backup" + System.currentTimeMillis());
+            try {
+                FileUtils.copyFile(old, backup);
+            }
+            catch (IOException e) {
+                log.error("Could not save backup file.", e);
+            }
 
-    public Collection<Datasource> getResources() {
-        return this.resources.values();
-    }
+            log.debug("Backup up index file to " + backup.getAbsolutePath());
+        }
 
-    public Collection<Datasource> getResource(String id) {
-        Collection<Datasource> coll = new ArrayList<Datasource>();
-        if (this.resources.containsKey(id))
-            coll.add(this.resources.get(id));
-        return coll;
-    }
+        File f = new File(this.indexFile.getFile());
+        f.delete();
 
-    public boolean containsResource(String id) {
-        return this.resources.containsKey(id);
+        DatasourcesIndex newDI = new DatasourcesIndex(this.indexId, this.resources.values());
+
+        try {
+            mapper.writeValue(f, newDI);
+        }
+        catch (JsonGenerationException e) {
+            log.error("Could not save index file.", e);
+        }
+        catch (JsonMappingException e) {
+            log.error("Could not save index file.", e);
+        }
+        catch (IOException e) {
+            log.error("Could not save index file.", e);
+        }
     }
 
 }

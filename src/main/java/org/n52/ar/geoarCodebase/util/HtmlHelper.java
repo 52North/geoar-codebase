@@ -26,6 +26,19 @@ package org.n52.ar.geoarCodebase.util;
 
 public class HtmlHelper {
 
+    public static String afterResult() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<p style=\"color: grey\"><br />");
+        sb.append("Please see the resource reference for copyright information.");
+        sb.append("</p>");
+
+        sb.append("</div>"); // opened in beforeResult()
+        sb.append("</body></html>");
+
+        return (sb.toString());
+    }
+
     public static String beforeResult() {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
@@ -42,19 +55,6 @@ public class HtmlHelper {
         sb.append("<div style=\"margin: 10px;\" id=\"content\">"); // closed in afterResult()
         sb.append("<h1>52&deg;North GeoAR Codebase</h1>");
         sb.append("</p>");
-
-        return (sb.toString());
-    }
-
-    public static String afterResult() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("<p style=\"color: grey\"><br />");
-        sb.append("Please see the resource reference for copyright information.");
-        sb.append("</p>");
-
-        sb.append("</div>"); // opened in beforeResult()
-        sb.append("</body></html>");
 
         return (sb.toString());
     }
