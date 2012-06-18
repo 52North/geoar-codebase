@@ -38,7 +38,6 @@ import org.n52.ar.geoarCodebase.CodebaseDatabase;
 import org.n52.ar.geoarCodebase.ds.Datasource;
 import org.n52.ar.geoarCodebase.util.CodebaseProperties;
 import org.n52.ar.geoarCodebase.util.HtmlHelper;
-import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;
 import org.restlet.data.Reference;
@@ -131,74 +130,96 @@ public class InfoResource extends ServerResource {
                 // Process the uploaded item and the associated fields, then save file on disk
 
                 // get the form inputs
-                String appName = null;
-                String appDescription = null;
-                String appImageLink = null;
-                String appPlatform = null;
-                FileItem appFileItem = null;
+                String dsName = "";
+                String dsDescription = "";
+                String dsImageLink = "";
+                String dsPlatform = "";
+                FileItem dsFileItem = null;
 
                 for (FileItem fi : items) {
                     if (fi.getFieldName().equals(FORM_INPUT_FILE)) {
                         String name = fi.getName();
 
                         if ( !FilenameUtils.getExtension(name).equals(CodebaseProperties.APK_FILE_EXTENSION)) {
-                            rep = new StringRepresentation("Only accept .apk files!", MediaType.TEXT_PLAIN);
+                            rep = new StringRepresentation("Required .apk file missing!", MediaType.TEXT_PLAIN);
                             return rep;
                         }
 
                         this.id = FilenameUtils.getBaseName(name);
-                        appFileItem = fi;
+                        dsFileItem = fi;
                     }
                     else if (fi.getFieldName().equals(FORM_INPUT_DESCRIPTION))
-                        appDescription = fi.getString();
+                        dsDescription = fi.getString();
                     else if (fi.getFieldName().equals(FORM_INPUT_NAME))
-                        appName = fi.getString();
+                        dsName = fi.getString();
                     else if (fi.getFieldName().equals(FORM_INPUT_IMAGE_LINK))
-                        appImageLink = fi.getString();
+                        dsImageLink = fi.getString();
                     else if (fi.getFieldName().equals(FORM_INPUT_PLATFORM))
-                        appPlatform = fi.getString();
+                        dsPlatform = fi.getString();
                 }
 
-                // if anything is missing, return error
-                if (appName == null || appDescription == null || appImageLink == null || appFileItem == null || appPlatform == null) {
-                    rep = new StringRepresentation("Uploaded file to " + fileName + ".", MediaType.TEXT_PLAIN);
+                // see if it already exists
+                CodebaseDatabase db = CodebaseDatabase.getInstance();
+                boolean databaseEntryExists = db.containsResource(this.id);
+
+                // if anything is missing, return error, or use existing database entry
+                if (dsFileItem == null) {
+                    rep = new StringRepresentation("Missing file!", MediaType.TEXT_PLAIN);
+                    return rep;
+                }
+                
+                // see if all values are given
+                if (databaseEntryExists) {
+                    Datasource ds = db.getResource(this.id).iterator().next();
+                    if (dsName.isEmpty())
+                        dsName = ds.getName();
+                    if (dsDescription.isEmpty())
+                        dsDescription = ds.getDescription();
+                    if (dsImageLink.isEmpty())
+                        dsImageLink = ds.getImageLink();
+                    if (dsPlatform.isEmpty())
+                        dsPlatform = ds.getPlatform();
+                }
+                else if (dsName.isEmpty() || dsDescription.isEmpty() || dsImageLink.isEmpty()
+                        || dsPlatform.isEmpty())
+                    rep = new StringRepresentation("Not all required information is provided!", MediaType.TEXT_PLAIN);
+                
+                // all info given, or taken from db
+                log.debug("Read form: {}, {}, {}, {} >>> {}", new Object[] {dsName,
+                                                                            dsDescription,
+                                                                            dsImageLink,
+                                                                            dsPlatform,
+                                                                            dsFileItem.getName()});
+
+                // handle database entry
+                fileName = CodebaseProperties.getInstance().getApkPath(this.id);
+                File file = new File(fileName);
+                boolean fileExists = file.exists();
+
+                if (databaseEntryExists != fileExists) {
+                    log.warn("Found either database entry or file, bot not both! database: {} - file: {}",
+                             Boolean.valueOf(databaseEntryExists),
+                             Boolean.valueOf(fileExists));
+                }
+
+                if (fileExists) {
+                    log.warn("Deleting apk file " + this.id);
+                    boolean deleted = file.delete();
+                    if ( !deleted)
+                        log.error("Could not delete file " + fileName);
+                }
+
+                if (databaseEntryExists) {
+                    db.updateResource(this.id, dsName, dsDescription, dsImageLink, dsPlatform);
+                    rep = new StringRepresentation("Updated datasource (" + fileName + ").", MediaType.TEXT_PLAIN);
                 }
                 else {
-                    log.debug("Read form: {}, {}, {}, {} >>> {}", new Object[] { appName, appDescription, appImageLink, appPlatform, appFileItem.getName() });
-                    
-                    // handle database entry
-                    CodebaseDatabase db = CodebaseDatabase.getInstance();
-                    boolean databaseEntryExists = db.containsResource(this.id);
-
-                    fileName = CodebaseProperties.getInstance().getApkPath(this.id);
-                    File file = new File(fileName);
-                    boolean fileExists = file.exists();
-
-                    if (databaseEntryExists != fileExists) {
-                        log.warn("Found either database entry or file, bot not both! database: {} - file: {}",
-                                 Boolean.valueOf(databaseEntryExists),
-                                 Boolean.valueOf(fileExists));
-                    }
-
-                    if (fileExists) {
-                        log.warn("Deleting apk file " + this.id);
-                        boolean deleted = file.delete();
-                        if ( !deleted)
-                            log.error("Could not delete file " + fileName);
-                    }
-
-                    if (databaseEntryExists) {
-                        db.updateResource(this.id, appName, appDescription, appImageLink, appPlatform);
-                        rep = new StringRepresentation("Updated app to " + fileName + ".", MediaType.TEXT_PLAIN);
-                    }
-                    else {
-                        db.addResource(this.id, appName, appDescription, appImageLink, appPlatform);
-                        rep = new StringRepresentation("Uploaded app to " + fileName + ".", MediaType.TEXT_PLAIN);
-                    }
-
-                    // write the file!
-                    appFileItem.write(file);
+                    db.addResource(this.id, dsName, dsDescription, dsImageLink, dsPlatform);
+                    rep = new StringRepresentation("Uploaded datasource (" + fileName + ").", MediaType.TEXT_PLAIN);
                 }
+
+                // write the file!
+                dsFileItem.write(file);
             }
         }
         else {

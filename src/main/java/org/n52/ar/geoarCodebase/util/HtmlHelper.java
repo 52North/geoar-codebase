@@ -155,7 +155,7 @@ public class HtmlHelper {
 
         sb.append("<p>Upload .apk files here. New files (i.e. files with a name that does not exist as an id already) "
                 + "will be added, if the file is named _&lt;id&gt;.apk then the existing file is replaced "
-                + "and metadata is updated.</p>");
+                + "and metadata is updated; missing metadata is taken from existing datasource if applicable.</p>");
         sb.append("\n");
     }
 

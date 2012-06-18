@@ -101,16 +101,20 @@ public class Datasource {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Datasource [id=");
-        builder.append(this.id);
-        builder.append(", name=");
-        builder.append(this.name);
-        builder.append(", description=");
+        builder.append("Datasource [description=");
         builder.append(this.description);
-        builder.append(", imageLink=");
-        builder.append(this.imageLink);
         builder.append(", downloadLink=");
         builder.append(this.downloadLink);
+        builder.append(", id=");
+        builder.append(this.id);
+        builder.append(", imageLink=");
+        builder.append(this.imageLink);
+        builder.append(", name=");
+        builder.append(this.name);
+        builder.append(", platform=");
+        builder.append(this.platform);
+        builder.append(", version=");
+        builder.append(this.version);
         builder.append("]");
         return builder.toString();
     }
