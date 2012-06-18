@@ -56,7 +56,7 @@
 </ul>
 
 <p class="infotext">${project.name} (${project.artifactId})
-	${version}-r${buildNumber} as of ${buildTimestamp} | <span id="serviceUrl"><%=getServletContext().getInitParameter("serviceUrl")%></span></p>
+	${version}-r${buildNumber} as of ${buildTimestamp}<br /><span id="serviceUrl"><%=getServletContext().getInitParameter("serviceUrl")%></span></p>
 
 <div id="resultLog"></div>
 

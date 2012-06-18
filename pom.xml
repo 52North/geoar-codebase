@@ -164,6 +164,7 @@
 						<exclude>**/buildNumber.properties</exclude>
 						<exclude>**/org/restlet/**</exclude>
 						<exclude>**/*qrcode.js</exclude>
+						<exclude>**/*.css</exclude><!-- buggy -->
 					</excludes>
 					<includes>
 						<include>**/*.java</include>
@@ -172,7 +173,6 @@
 						<include>**/*.js</include>
 						<include>**/*.xml</include>
 						<include>**/*.xsl</include>
-						<include>**/*.css</include>
 						<include>**/*.html</include>
 					</includes>
 					<strictCheck>true</strictCheck>
