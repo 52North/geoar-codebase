@@ -5,25 +5,33 @@
       "id": "noise",
       "name": "Noise Data Source",
       "description": "Environmental noise data based on OpenNoiseMap.org.",
-      "imageLink": "http://www.opennoisemap.org/images/noiseDroid.png"
+      "imageLink": "http://www.opennoisemap.org/images/noiseDroid.png",
+      "version": 2,
+      "platform": "2.3"
     },
     {
       "id": "noisedroidsigned",
       "name": "Noise Droid App",
       "description": "For testing only, if a apk is recognized by Android...",
-      "imageLink": "http://www.opennoisemap.org/images/noiseDroid.png"
+      "imageLink": "http://www.opennoisemap.org/images/noiseDroid.png",
+      "version": 1,
+      "platform": "2.3"
     },
     {
       "id": "test",
       "name": "Small test",
       "description": "just another one",
-      "imageLink": "http://52north.org/templates/52n/images/52n-logo.gif"
+      "imageLink": "http://52north.org/templates/52n/images/52n-logo.gif",
+      "version": 1,
+      "platform": "2.3"
     },
     {
       "id": "test2",
       "name": "Huge test",
       "description": "just another dummy one",
-      "imageLink": "http://52north.org/templates/52n/images/52n-logo.gif"
+      "imageLink": "http://52north.org/templates/52n/images/52n-logo.gif",
+      "version": 1,
+      "platform": "2.3"
     }
   ]
 }

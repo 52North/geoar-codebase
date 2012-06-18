@@ -34,17 +34,17 @@ import org.slf4j.LoggerFactory;
 
 public class CodebaseApplication extends Application {
 
+    private static Logger log = LoggerFactory.getLogger(CodebaseApplication.class);
+
     public static final String PARAM_ID = "id";
 
     public static final String PARAM_TOKEN = "token";
 
-    private static final String ROUTE_BASE = "/";
+    private static final String ROUTE__BASE = "/";
 
-    private static final String ROUTE_APK = ROUTE_BASE + "{" + PARAM_ID + "}/apk";
+    private static final String ROUTE_APK = ROUTE__BASE + "{" + PARAM_ID + "}/apk";
 
-    private static final String ROUTE_INFO = ROUTE_BASE + "{" + PARAM_ID + "}";
-
-    private static Logger log = LoggerFactory.getLogger(CodebaseApplication.class);
+    private static final String ROUTE_INFO = ROUTE__BASE + "{" + PARAM_ID + "}";
 
     @Override
     public synchronized Restlet createInboundRoot() {
@@ -54,7 +54,7 @@ public class CodebaseApplication extends Application {
 
         // Defines a route for the resource elevation
         router.attach("", InfoResource.class);
-        router.attach(ROUTE_BASE, InfoResource.class);
+        router.attach(ROUTE__BASE, InfoResource.class);
         router.attach(ROUTE_INFO, InfoResource.class);
         router.attach(ROUTE_INFO + "/", InfoResource.class);
         router.attach(ROUTE_APK, ApkFileResource.class);

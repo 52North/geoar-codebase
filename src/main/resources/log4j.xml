@@ -30,7 +30,7 @@
 
 	<appender name="RoFiAppender" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="datePattern" value="'.'yyyy-MM-dd" />
-		<param name="file" value="${catalina.base}/logs/SIR.log" />
+		<param name="file" value="${catalina.base}/logs/52n-geoar-codebase.log" />
 		<param name="append" value="true" />
 		<param name="encoding" value="UTF-8" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -50,9 +50,10 @@
 	</logger>
 
 	<root>
-		<priority value="DEBUG" />
+<!-- 		<priority value="DEBUG" /> -->
+		<priority value="INFO" />
 		<appender-ref ref="ConsoleAppender" />
-<!-- 		<appender-ref ref="RoFiAppender" /> -->
+		<appender-ref ref="RoFiAppender" />
 	</root>
 
 </log4j:configuration>

@@ -24,13 +24,12 @@
 
 package org.n52.ar.geoarCodebase.ds;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Datasource {
 
     private String description;
 
-    @JsonIgnore
+    // @JsonIgnore
     private String downloadLink;
 
     private String id;
@@ -38,6 +37,10 @@ public class Datasource {
     private String imageLink;
 
     private String name;
+    
+    private String platform;
+    
+    private int version;
 
     public String getDescription() {
         return this.description;
@@ -59,6 +62,14 @@ public class Datasource {
         return this.name;
     }
 
+    public String getPlatform() {
+        return this.platform;
+    }
+
+    public int getVersion() {
+        return this.version;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -77,6 +88,14 @@ public class Datasource {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @Override

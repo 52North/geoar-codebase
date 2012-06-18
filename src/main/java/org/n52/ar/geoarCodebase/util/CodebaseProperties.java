@@ -49,6 +49,10 @@ public class CodebaseProperties {
 
     public static final String UPLOAD_TOKEN = "uploadToken";
 
+    public static String getFilename(String id) {
+        return id + "." + APK_FILE_EXTENSION;
+    }
+
     public static CodebaseProperties getInstance() {
         if (instance == null)
             throw new RuntimeException("CodebaseProperties must be instantiated with Application first!");
@@ -92,10 +96,6 @@ public class CodebaseProperties {
         String realPath = this.sc.getRealPath(this.codebasePath + "/" + getFilename(id));
 
         return realPath;
-    }
-
-    public static String getFilename(String id) {
-        return id + "." + APK_FILE_EXTENSION;
     }
 
     public String getUploadToken() {

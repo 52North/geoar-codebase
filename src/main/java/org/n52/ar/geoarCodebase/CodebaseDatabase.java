@@ -46,6 +46,8 @@ public class CodebaseDatabase {
 
     private static final String INDEX_FILE = "/datasources.json";
 
+    private static final int INITIAL_VERSION = 1;
+
     private static CodebaseDatabase instance;
 
     private static Logger log = LoggerFactory.getLogger(CodebaseDatabase.class);
@@ -72,12 +74,14 @@ public class CodebaseDatabase {
         init();
     }
 
-    public void addResource(String id, String name, String description, String imageLink) {
+    public void addResource(String id, String name, String description, String imageLink, String platform) {
         Datasource ds = new Datasource();
         ds.setId(id);
         ds.setName(name);
         ds.setDescription(description);
         ds.setImageLink(imageLink);
+        ds.setPlatform(platform);
+        ds.setVersion(INITIAL_VERSION);
 
         this.resources.put(id, ds);
 
@@ -167,6 +171,23 @@ public class CodebaseDatabase {
         catch (IOException e) {
             log.error("Could not save index file.", e);
         }
+    }
+
+    public void updateResource(String id, String name, String description, String imageLink, String platform) {
+        Datasource ds = new Datasource();
+        ds.setId(id);
+        ds.setName(name);
+        ds.setDescription(description);
+        ds.setImageLink(imageLink);
+        ds.setPlatform(platform);
+
+        Datasource old = this.resources.get(id);
+        int oldVersion = old.getVersion();
+        ds.setVersion(oldVersion + 1);
+
+        this.resources.put(id, ds);
+
+        saveResources();
     }
 
 }

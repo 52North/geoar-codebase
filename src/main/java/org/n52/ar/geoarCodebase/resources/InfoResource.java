@@ -38,6 +38,7 @@ import org.n52.ar.geoarCodebase.CodebaseDatabase;
 import org.n52.ar.geoarCodebase.ds.Datasource;
 import org.n52.ar.geoarCodebase.util.CodebaseProperties;
 import org.n52.ar.geoarCodebase.util.HtmlHelper;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;
 import org.restlet.data.Reference;
@@ -58,13 +59,19 @@ public class InfoResource extends ServerResource {
 
     private static final String CODEBASE_PATH_CONTEXT_PARAM = "codebase";
 
-    private static final Object FORM_FILE_INPUT_NAME = "fileToUpload";
+    public static final String FORM_INPUT_DESCRIPTION = "descriptionOfApp";
+
+    public static final String FORM_INPUT_FILE = "fileOfApp";
+
+    public static final String FORM_INPUT_IMAGE_LINK = "imageOfApp";
+
+    public static final String FORM_INPUT_NAME = "nameOfApp";
+
+    public static final String FORM_INPUT_PLATFORM = "targetPlatformOfApp";
 
     private static Logger log = LoggerFactory.getLogger(InfoResource.class);
 
-    private static final String MSG_NO_LINK = "No download link available.";
-
-    private static final Object MSG_NO_RESULT = "No results matching your input!";
+    private static final String MSG_NO_RESULT = "No results matching your input!";
 
     private static final String SERVICE_INFO_CONTEXT_PARAM = "serviceInfo";
 
@@ -121,56 +128,76 @@ public class InfoResource extends ServerResource {
                 // 3/ Request is parsed by the handler which generates a list of FileItems
                 items = upload.parseRequest(getRequest());
 
-                // Process only the uploaded item called "fileToUpload" and save it on disk
-                boolean found = false;
+                // Process the uploaded item and the associated fields, then save file on disk
+
+                // get the form inputs
+                String appName = null;
+                String appDescription = null;
+                String appImageLink = null;
+                String appPlatform = null;
+                FileItem appFileItem = null;
 
                 for (FileItem fi : items) {
-                    if (fi.getFieldName().equals(FORM_FILE_INPUT_NAME)) {
-                        found = true;
+                    if (fi.getFieldName().equals(FORM_INPUT_FILE)) {
                         String name = fi.getName();
+
                         if ( !FilenameUtils.getExtension(name).equals(CodebaseProperties.APK_FILE_EXTENSION)) {
                             rep = new StringRepresentation("Only accept .apk files!", MediaType.TEXT_PLAIN);
                             return rep;
                         }
 
                         this.id = FilenameUtils.getBaseName(name);
-
-                        // clean up and handle database entry
-                        CodebaseDatabase db = CodebaseDatabase.getInstance();
-                        boolean databaseEntryExists = db.containsResource(this.id);
-                        fileName = CodebaseProperties.getInstance().getApkPath(this.id);
-                        File file = new File(fileName);
-                        boolean fileExists = file.exists();
-
-                        if (databaseEntryExists != fileExists) {
-                            log.error("Found either database entry or file, bot not both! database: {} - file: {}",
-                                      Boolean.valueOf(databaseEntryExists),
-                                      Boolean.valueOf(fileExists));
-                        }
-
-                        if (fileExists) {
-                            log.warn("Replacing apk file for " + this.id);
-                            boolean deleted = file.delete();
-                            if ( !deleted)
-                                log.error("Could not delete file " + fileName);
-                        }
-                        if ( !databaseEntryExists) {
-                            db.addResource(this.id, this.id + "_name", "no description", null);
-                        }
-
-                        // write it!
-                        fi.write(file);
-
-                        break;
+                        appFileItem = fi;
                     }
+                    else if (fi.getFieldName().equals(FORM_INPUT_DESCRIPTION))
+                        appDescription = fi.getString();
+                    else if (fi.getFieldName().equals(FORM_INPUT_NAME))
+                        appName = fi.getString();
+                    else if (fi.getFieldName().equals(FORM_INPUT_IMAGE_LINK))
+                        appImageLink = fi.getString();
+                    else if (fi.getFieldName().equals(FORM_INPUT_PLATFORM))
+                        appPlatform = fi.getString();
                 }
 
-                // sent info back to the client.
-                if (found) {
+                // if anything is missing, return error
+                if (appName == null || appDescription == null || appImageLink == null || appFileItem == null || appPlatform == null) {
                     rep = new StringRepresentation("Uploaded file to " + fileName + ".", MediaType.TEXT_PLAIN);
                 }
                 else {
-                    rep = new StringRepresentation("No file uploaded.", MediaType.TEXT_PLAIN);
+                    log.debug("Read form: {}, {}, {}, {} >>> {}", new Object[] { appName, appDescription, appImageLink, appPlatform, appFileItem.getName() });
+                    
+                    // handle database entry
+                    CodebaseDatabase db = CodebaseDatabase.getInstance();
+                    boolean databaseEntryExists = db.containsResource(this.id);
+
+                    fileName = CodebaseProperties.getInstance().getApkPath(this.id);
+                    File file = new File(fileName);
+                    boolean fileExists = file.exists();
+
+                    if (databaseEntryExists != fileExists) {
+                        log.warn("Found either database entry or file, bot not both! database: {} - file: {}",
+                                 Boolean.valueOf(databaseEntryExists),
+                                 Boolean.valueOf(fileExists));
+                    }
+
+                    if (fileExists) {
+                        log.warn("Deleting apk file " + this.id);
+                        boolean deleted = file.delete();
+                        if ( !deleted)
+                            log.error("Could not delete file " + fileName);
+                    }
+
+                    if (databaseEntryExists) {
+                        db.updateResource(this.id, appName, appDescription, appImageLink, appPlatform);
+                        rep = new StringRepresentation("Updated app to " + fileName + ".", MediaType.TEXT_PLAIN);
+                    }
+                    else {
+                        db.addResource(this.id, appName, appDescription, appImageLink, appPlatform);
+                        rep = new StringRepresentation("Uploaded app to " + fileName + ".", MediaType.TEXT_PLAIN);
+                    }
+
+                    // write the file!
+                    appFileItem.write(file);
                 }
             }
         }
@@ -224,67 +251,22 @@ public class InfoResource extends ServerResource {
     public Representation toHtml() {
         StringBuilder sb = new StringBuilder();
 
-        String s = HtmlHelper.beforeResult();
-        sb.append(s);
+        HtmlHelper.beforeResult(sb);
 
         if (this.resources.isEmpty()) {
             sb.append(MSG_NO_RESULT);
         }
         else {
             for (Datasource ds : this.resources) {
-                sb.append("<div>");
-                sb.append("<h2>");
-                sb.append(ds.getName());
-                sb.append("</h2>");
-                sb.append("<p><em>Description</em>: ");
-                sb.append(ds.getDescription());
-                sb.append("</p>");
-                sb.append("<p><em>Download</em>: ");
-                if (ds.getDownloadLink() != null) {
-                    if (ds.getDownloadLink().contains("http")) {
-                        sb.append("<a href=\"");
-                        sb.append(ds.getDownloadLink());
-                        sb.append("\">");
-                        sb.append(ds.getDownloadLink());
-                        sb.append("</a>");
-                    }
-                    else
-                        sb.append(ds.getDownloadLink());
-                }
-                else
-                    sb.append(MSG_NO_LINK);
-                sb.append("</p>");
-                sb.append("<p>");
-                sb.append("<img src=\"");
-                sb.append(ds.getImageLink());
-                sb.append("\" />");
-                sb.append("</p>");
-                sb.append("</div>");
+                HtmlHelper.appendDatasource(sb, ds);
             }
         }
 
         if (this.uploadAuthorized) {
-            sb.append("<h1>");
-            sb.append("Upload");
-            sb.append("</h1>");
-            sb.append("<form method=\"post\" ");
-            sb.append("action=\"");
-            sb.append(getReference());
-            sb.append("\" ");
-            sb.append("enctype=\"multipart/form-data\">");
-            sb.append("<label for=\"male\">File:  </label>");
-            sb.append("<input name=\"");
-            sb.append(FORM_FILE_INPUT_NAME);
-            sb.append("\" type=\"file\"/>");
-            // sb.append("<br /><label for=\"male\">Token: </label>");
-            // sb.append("<input name=\"token\" type=\"text\"/>");
-            sb.append("<input type=\"submit\"/>");
-            sb.append("</form>");
-            sb.append("<p>Upload .apk files here. New files (i.e. files with a name that does not exist as an id already) will get dummy names and descriptions, if the file is named _&lt;id&gt;.apk then the existing file is replaced.</p>");
+            HtmlHelper.appendUploadForm(sb, getReference().toString());
         }
 
-        s = HtmlHelper.afterResult();
-        sb.append(s);
+        HtmlHelper.afterResult(sb);
 
         StringRepresentation representation = new StringRepresentation(sb.toString(), MediaType.TEXT_HTML);
         return representation;
@@ -330,6 +312,9 @@ public class InfoResource extends ServerResource {
                 sb.append(ds.getDescription());
                 sb.append("\nDownload: ");
                 sb.append(ds.getDownloadLink());
+
+                // TODO instead of having the image as a link, use content negotiation @Get("image/*") and
+                // return an image then!
                 sb.append("\nImage: ");
                 sb.append(ds.getImageLink());
 
