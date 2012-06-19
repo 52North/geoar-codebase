@@ -24,12 +24,25 @@
 
 package org.n52.ar.geoarCodebase.util;
 
+import org.n52.ar.geoarCodebase.CodebaseApplication;
 import org.n52.ar.geoarCodebase.ds.Datasource;
 import org.n52.ar.geoarCodebase.resources.InfoResource;
 
 public class HtmlHelper {
 
     private static final String MSG_NO_LINK = "No download link available.";
+
+    private static final String ID_FILE = "idFile";
+
+    private static final String ID_INPUT = "idInput";
+
+    private static final String ID_DESCR = "idDescr";
+
+    private static final String ID_IMG_LINK = "idImg";
+
+    private static final String ID_PLATFORM = "idPlatform";
+
+    private static final Object IMG_ALT_TEXT_PRE = "Image for datasource ";
 
     public static void afterResult(StringBuilder sb) {
         sb.append("<p style=\"color: grey\"><br />");
@@ -42,11 +55,15 @@ public class HtmlHelper {
         sb.append("</body></html>");
     }
 
-    public static void appendDatasource(StringBuilder sb, Datasource ds) {
+    public static void appendDatasource(StringBuilder sb, Datasource ds, String link) {
         sb.append("<div>");
         sb.append("\n");
         sb.append("<h2>");
+        sb.append("<a href=\"");
+        sb.append(link);
+        sb.append("\">");
         sb.append(ds.getName());
+        sb.append("</a>");
         sb.append("</h2>");
         sb.append("\n");
         sb.append("<p><em>Description</em>: ");
@@ -80,6 +97,9 @@ public class HtmlHelper {
         sb.append("<p>");
         sb.append("<img src=\"");
         sb.append(ds.getImageLink());
+        sb.append("\" alt=\"");
+        sb.append(IMG_ALT_TEXT_PRE);
+        sb.append(ds.getId());
         sb.append("\" />");
         sb.append("</p>");
         sb.append("\n");
@@ -88,75 +108,51 @@ public class HtmlHelper {
         sb.append("\n");
     }
 
-    public static void appendUploadForm(StringBuilder sb, String reference) {
+    public static void appendDeleteForm(StringBuilder sb, String action) {
         sb.append("\n");
         sb.append("<h1>");
-        sb.append("Upload");
+        sb.append("Delete");
         sb.append("</h1>");
         sb.append("\n");
 
         sb.append("<form method=\"post\" ");
         sb.append("action=\"");
-        sb.append(reference);
-        sb.append("\" ");
-        sb.append("enctype=\"multipart/form-data\">");
-        sb.append("\n");
+        sb.append(action);
+        sb.append("\" enctype=\"application/x-www-form-urlencoded\">");
+        // sb.append("\n");
+        // sb.append("<label for=\"");
+        // sb.append(InfoResource.FORM_INPUT_IDENTIFIER);
+        // sb.append("\">Identifier:  </label>");
+        // sb.append("<select name=\"");
+        // sb.append(InfoResource.FORM_INPUT_IDENTIFIER);
+        // sb.append("\" />");
+        // for (String id : resourceIdentifiers) {
+        // sb.append("<option value=\"");
+        // sb.append(id);
+        // sb.append("\">");
+        // sb.append(id);
+        // sb.append("</option>");
+        // }
+        // sb.append("</select>");
 
-        sb.append("<label for=\"");
-        sb.append(InfoResource.FORM_INPUT_FILE);
-        sb.append("\">File:  </label>");
-        sb.append("<input name=\"");
-        sb.append(InfoResource.FORM_INPUT_FILE);
-        sb.append("\" type=\"file\"/>");
+        sb.append("<input type=\"hidden\" name=\"");
+        sb.append(CodebaseApplication.FORM_ACTION);
+        sb.append("\" value=\"");
+        sb.append(CodebaseApplication.FORM_ACTION_DELETE);
+        sb.append("\" />");
         sb.append("\n");
-
-        sb.append("<br />");
-        sb.append("<label for=\"");
-        sb.append(InfoResource.FORM_INPUT_DESCRIPTION);
-        sb.append("\">Description:  </label>");
-        sb.append("<input name=\"");
-        sb.append(InfoResource.FORM_INPUT_DESCRIPTION);
-        sb.append("\" type=\"text\"/>");
-        sb.append("\n");
-
-        sb.append("<br />");
-        sb.append("<label for=\"");
-        sb.append(InfoResource.FORM_INPUT_NAME);
-        sb.append("\">Name:  </label>");
-        sb.append("<input name=\"");
-        sb.append(InfoResource.FORM_INPUT_NAME);
-        sb.append("\" type=\"text\"/>");
-        sb.append("\n");
-
-        sb.append("<br />");
-        sb.append("<label for=\"");
-        sb.append(InfoResource.FORM_INPUT_IMAGE_LINK);
-        sb.append("\">Image URL:  </label>");
-        sb.append("<input name=\"");
-        sb.append(InfoResource.FORM_INPUT_IMAGE_LINK);
-        sb.append("\" type=\"text\"/>");
-        sb.append("\n");
-
-        sb.append("<br />");
-        sb.append("<label for=\"");
-        sb.append(InfoResource.FORM_INPUT_PLATFORM);
-        sb.append("\">Platform:  </label>");
-        sb.append("<input name=\"");
-        sb.append(InfoResource.FORM_INPUT_PLATFORM);
-        sb.append("\" type=\"text\"/>");
-        sb.append("\n");
-
-        sb.append("<br />");
-        sb.append("<input type=\"submit\" />");
+        sb.append("<input type=\"submit\" value=\"Delete\" />");
         sb.append("\n");
 
         sb.append("</form>");
         sb.append("\n");
 
-        sb.append("<p>Upload .apk files here. New files (i.e. files with a name that does not exist as an id already) "
-                + "will be added, if the file is named _&lt;id&gt;.apk then the existing file is replaced "
-                + "and metadata is updated; missing metadata is taken from existing datasource if applicable.</p>");
+        sb.append("<p>Deleted files will not be backed up.</p>");
         sb.append("\n");
+    }
+
+    public static void appendUploadForm(StringBuilder sb, String action) {
+        appendUploadForm(sb, action, "", "", "", "");
     }
 
     public static void beforeResult(StringBuilder sb) {
@@ -169,13 +165,13 @@ public class HtmlHelper {
         sb.append("GeoAR Codebase Information");
         sb.append("</title>");
         sb.append("\n");
+        sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+        sb.append("\n");
         sb.append("<link href=\"http://52north.org/templates/52n/favicon.ico\" rel=\"shortcut icon\" type=\"image/x-icon\" />");
         sb.append("\n");
         sb.append("<link rel=\"stylesheet\" href=\"http://52north.org/templates/52n/css/external-sites-template/external-site_52n-template-2011_site.css\" type=\"text/css\" media=\"all\" />");
         sb.append("\n");
         sb.append("<link rel=\"stylesheet\" href=\"http://52north.org/templates/52n/52n_menus/52n_cssmenu/52n.cssmenu.css\" type=\"text/css\" />");
-        sb.append("\n");
-        sb.append("<meta http-equiv=\"Content-Language\" content=\"en\" />");
         sb.append("\n");
 
         sb.append("<style type=\"text/css\">");
@@ -207,6 +203,104 @@ public class HtmlHelper {
         sb.append("<div style=\"margin: 10px;\" id=\"content\">"); // closed in afterResult()
         sb.append("\n");
         sb.append("<h1>52&deg;North GeoAR Codebase</h1>");
+        sb.append("\n");
+    }
+
+    public static void appendUploadForm(StringBuilder sb, String action, Datasource ds) {
+        appendUploadForm(sb, action, ds.getName(), ds.getDescription(), ds.getImageLink(), ds.getPlatform());
+    }
+
+    private static void appendUploadForm(StringBuilder sb,
+                                         String action,
+                                         String name,
+                                         String description,
+                                         String imageLink,
+                                         String platform) {
+        sb.append("\n");
+        sb.append("<h1>");
+        sb.append("Upload");
+        sb.append("</h1>");
+        sb.append("\n");
+
+        sb.append("<form method=\"post\" ");
+        sb.append("action=\"");
+        sb.append(action);
+        sb.append("\" ");
+        sb.append("enctype=\"multipart/form-data\">");
+        sb.append("\n");
+
+        sb.append("<label for=\"");
+        sb.append(ID_FILE);
+        sb.append("\">File:  </label>");
+        sb.append("<input name=\"");
+        sb.append(InfoResource.FORM_INPUT_FILE);
+        sb.append("\" type=\"file\" id=\"");
+        sb.append(ID_FILE);
+        sb.append("\" />");
+        sb.append("\n");
+
+        sb.append("<br />");
+        sb.append("<label for=\"");
+        sb.append(ID_INPUT);
+        sb.append("\">Name:  </label>");
+        sb.append("<input name=\"");
+        sb.append(InfoResource.FORM_INPUT_NAME);
+        sb.append("\" type=\"text\" value=\"");
+        sb.append(name);
+        sb.append("\" id=\"");
+        sb.append(ID_INPUT);
+        sb.append("\" />");
+        sb.append("\n");
+
+        sb.append("<br />");
+        sb.append("<label for=\"");
+        sb.append(ID_DESCR);
+        sb.append("\">Description:  </label>");
+        sb.append("<input name=\"");
+        sb.append(InfoResource.FORM_INPUT_DESCRIPTION);
+        sb.append("\" type=\"text\" value=\"");
+        sb.append(description);
+        sb.append("\" id=\"");
+        sb.append(ID_DESCR);
+        sb.append("\" />");
+        sb.append("\n");
+
+        sb.append("<br />");
+        sb.append("<label for=\"");
+        sb.append(ID_IMG_LINK);
+        sb.append("\">Image URL:  </label>");
+        sb.append("<input name=\"");
+        sb.append(InfoResource.FORM_INPUT_IMAGE_LINK);
+        sb.append("\" type=\"text\" value=\"");
+        sb.append(imageLink);
+        sb.append("\" id=\"");
+        sb.append(ID_IMG_LINK);
+        sb.append("\" />");
+        sb.append("\n");
+
+        sb.append("<br />");
+        sb.append("<label for=\"");
+        sb.append(ID_PLATFORM);
+        sb.append("\">Platform:  </label>");
+        sb.append("<input name=\"");
+        sb.append(InfoResource.FORM_INPUT_PLATFORM);
+        sb.append("\" type=\"text\" value=\"");
+        sb.append(platform);
+        sb.append("\" id=\"");
+        sb.append(ID_PLATFORM);
+        sb.append("\" />");
+        sb.append("\n");
+
+        sb.append("<br />");
+        sb.append("<input type=\"submit\" /> <input type=\"reset\" />");
+        sb.append("\n");
+
+        sb.append("</form>");
+        sb.append("\n");
+
+        sb.append("<p>Upload .apk files here. New files (i.e. files with a name that does not exist as an id already) "
+                + "will be added, if the file is named _&lt;id&gt;.apk then the existing file is replaced "
+                + "and metadata is updated; missing metadata is taken from existing datasource if applicable.</p>");
         sb.append("\n");
     }
 }

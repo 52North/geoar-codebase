@@ -46,6 +46,11 @@ public class CodebaseApplication extends Application {
 
     private static final String ROUTE_INFO = ROUTE__BASE + "{" + PARAM_ID + "}";
 
+    public static final String FORM_ACTION = "formAction";
+
+    // FIXME move constants out of application class
+    public static final String FORM_ACTION_DELETE = "delete";
+
     @Override
     public synchronized Restlet createInboundRoot() {
         log.debug("Creating new inbound root: " + this);
@@ -57,6 +62,8 @@ public class CodebaseApplication extends Application {
         router.attach(ROUTE__BASE, InfoResource.class);
         router.attach(ROUTE_INFO, InfoResource.class);
         router.attach(ROUTE_INFO + "/", InfoResource.class);
+        // router.attach(ROUTE_INFO + "/" + ROUTE_UPLOAD, InfoResource.class);
+        router.attach(ROUTE_INFO + "/" + FORM_ACTION, InfoResource.class);
         router.attach(ROUTE_APK, ApkFileResource.class);
         router.attach(ROUTE_APK + "/", ApkFileResource.class);
 

@@ -27,8 +27,8 @@
     },
     {
       "id": "test2",
-      "name": "Huge test",
-      "description": "just another dummy one",
+      "name": "Notexist",
+      "description": "Just a dummy to test if non-existent files are caught!",
       "imageLink": "http://52north.org/templates/52n/images/52n-logo.gif",
       "version": 1,
       "platform": "2.3"

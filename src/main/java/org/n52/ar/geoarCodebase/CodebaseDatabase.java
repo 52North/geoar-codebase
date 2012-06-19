@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.JsonGenerationException;
@@ -38,6 +39,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.n52.ar.geoarCodebase.ds.Datasource;
 import org.n52.ar.geoarCodebase.ds.DatasourcesIndex;
+import org.n52.ar.geoarCodebase.util.CodebaseProperties;
 import org.n52.ar.geoarCodebase.util.MapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,25 @@ public class CodebaseDatabase {
         log.info("NEW " + this);
 
         init();
+        check();
+    }
+
+    private void check() {
+        // check if files exist for all stored resources - if not, remove them
+        Collection<String> toberemoved = new ArrayList<String>();
+        for (Entry<String, Datasource> r : this.resources.entrySet()) {
+            String path = CodebaseProperties.getInstance().getApkPath(r.getValue().getId());
+            File apkFile = new File(path);
+
+            if ( !apkFile.exists()) {
+                log.error("Could not load apk file from {}, removing file from database.", apkFile);
+                toberemoved.add(r.getValue().getId());
+            }
+        }
+
+        for (String id : toberemoved) {
+            this.resources.remove(id);
+        }
     }
 
     public void addResource(String id, String name, String description, String imageLink, String platform) {
@@ -188,6 +209,35 @@ public class CodebaseDatabase {
         this.resources.put(id, ds);
 
         saveResources();
+    }
+
+    public Collection<String> getResourceIdentifiers() {
+        return this.resources.keySet();
+    }
+
+    public boolean deleteResource(String id) {
+        boolean delete = false;
+
+        if (this.resources.containsKey(id)) {
+            this.resources.remove(id);
+
+            String path = CodebaseProperties.getInstance().getApkPath(id);
+            File apkFile = new File(path);
+
+            if ( !apkFile.exists())
+                log.error("Cannot delete non-existing file {}", apkFile);
+            else {
+                delete = apkFile.delete();
+                if ( !delete)
+                    log.error("Error deleting file {}", apkFile);
+                else
+                    log.debug("Deleted file {}", apkFile);
+            }
+        }
+        else
+            log.warn("Trying to delete non-existent resource {}", id);
+
+        return delete;
     }
 
 }

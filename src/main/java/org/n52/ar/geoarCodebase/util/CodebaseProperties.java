@@ -49,6 +49,8 @@ public class CodebaseProperties {
 
     public static final String UPLOAD_TOKEN = "uploadToken";
 
+    private static final String DELETE_TOKEN = "deleteToken";
+
     public static String getFilename(String id) {
         return id + "." + APK_FILE_EXTENSION;
     }
@@ -100,6 +102,10 @@ public class CodebaseProperties {
 
     public String getUploadToken() {
         return this.p.getProperty(UPLOAD_TOKEN);
+    }
+
+    public Object getDeleteToken() {
+        return this.p.getProperty(DELETE_TOKEN);
     }
 
 }
