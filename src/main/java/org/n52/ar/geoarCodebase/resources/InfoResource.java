@@ -336,7 +336,7 @@ public class InfoResource extends ServerResource {
         Reference ref = getReference();
         StringBuilder sb = new StringBuilder();
 
-        HtmlHelper.beforeResult(sb);
+        HtmlHelper.beforeResult(sb, this.serviceInfo);
 
         if (this.resources.isEmpty()) {
             sb.append(MSG_NO_RESULT);
@@ -398,7 +398,7 @@ public class InfoResource extends ServerResource {
             HtmlHelper.appendDeleteForm(sb, action.toString());
         }
 
-        HtmlHelper.afterResult(sb);
+        HtmlHelper.afterResult(sb, this.serviceInfo);
 
         StringRepresentation representation = new StringRepresentation(sb.toString(), MediaType.TEXT_HTML);
         return representation;
