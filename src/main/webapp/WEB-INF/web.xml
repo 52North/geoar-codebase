@@ -57,7 +57,11 @@
 	</context-param>
 	<context-param>
 		<param-name>codebasePath</param-name>
-		<param-value>codebase</param-value>
+		<param-value>codebase_apk</param-value>
+	</context-param>
+	<context-param>
+		<param-name>imagePath</param-name>
+		<param-value>codebase_image</param-value>
 	</context-param>
 	<context-param>
 		<param-name>serviceInfo</param-name>

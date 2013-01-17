@@ -24,99 +24,82 @@
 
 package org.n52.ar.geoarCodebase.ds;
 
-
 public class Datasource {
 
-    private String description;
+	private String description;
 
-    // @JsonIgnore
-    private String downloadLink;
+	private String id;
 
-    private String id;
+	private String name;
 
-    private String imageLink;
+	private Long version;
 
-    private String name;
-    
-    private String platform;
-    
-    private int version;
+	private int revision;
 
-    public String getDescription() {
-        return this.description;
-    }
+	private String publisher;
 
-    public String getDownloadLink() {
-        return this.downloadLink;
-    }
+	public String getDescription() {
+		return this.description;
+	}
 
-    public String getId() {
-        return this.id;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    public String getImageLink() {
-        return this.imageLink;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	public Long getVersion() {
+		return this.version;
+	}
 
-    public String getPlatform() {
-        return this.platform;
-    }
+	public int getRevision() {
+		return this.revision;
+	}
 
-    public int getVersion() {
-        return this.version;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setDownloadLink(String downloadLink) {
-        this.downloadLink = downloadLink;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setVersion(Long version) {
+		this.version = version;
+	}
 
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
-    }
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Datasource [description=");
+		builder.append(this.description);
+		builder.append(", id=");
+		builder.append(this.id);
+		builder.append(", name=");
+		builder.append(this.name);
+		builder.append(", version=");
+		builder.append(this.version);
+		builder.append(", rev=");
+		builder.append(this.revision);
+		builder.append("]");
+		return builder.toString();
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setRevision(int revision) {
+		this.revision = revision;
+	}
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
+	}
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Datasource [description=");
-        builder.append(this.description);
-        builder.append(", downloadLink=");
-        builder.append(this.downloadLink);
-        builder.append(", id=");
-        builder.append(this.id);
-        builder.append(", imageLink=");
-        builder.append(this.imageLink);
-        builder.append(", name=");
-        builder.append(this.name);
-        builder.append(", platform=");
-        builder.append(this.platform);
-        builder.append(", version=");
-        builder.append(this.version);
-        builder.append("]");
-        return builder.toString();
-    }
-
+	public String getPublisher() {
+		return publisher;
+	}
 }

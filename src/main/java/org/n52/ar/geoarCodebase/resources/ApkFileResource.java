@@ -85,7 +85,7 @@ public class ApkFileResource extends ServerResource {
 
         Representation representation = new FileRepresentation(apkFile, APPLICATION_APK);
         Disposition disposition = representation.getDisposition();
-        disposition.setFilename(CodebaseProperties.getFilename(this.id));
+        disposition.setFilename(CodebaseProperties.getApkFilename(this.id));
         disposition.setType(Disposition.TYPE_ATTACHMENT);
 
         return representation;

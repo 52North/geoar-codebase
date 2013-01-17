@@ -25,6 +25,7 @@
 package org.n52.ar.geoarCodebase;
 
 import org.n52.ar.geoarCodebase.resources.ApkFileResource;
+import org.n52.ar.geoarCodebase.resources.ImageFileResource;
 import org.n52.ar.geoarCodebase.resources.InfoResource;
 import org.restlet.Application;
 import org.restlet.Restlet;
@@ -34,40 +35,47 @@ import org.slf4j.LoggerFactory;
 
 public class CodebaseApplication extends Application {
 
-    private static Logger log = LoggerFactory.getLogger(CodebaseApplication.class);
+	private static Logger log = LoggerFactory
+			.getLogger(CodebaseApplication.class);
 
-    public static final String PARAM_ID = "id";
+	public static final String PARAM_ID = "id";
 
-    public static final String PARAM_TOKEN = "token";
+	public static final String PARAM_TOKEN = "token";
 
-    private static final String ROUTE__BASE = "/";
+	private static final String ROUTE__BASE = "/";
 
-    private static final String ROUTE_APK = ROUTE__BASE + "{" + PARAM_ID + "}/apk";
+	private static final String ROUTE_APK = ROUTE__BASE + "{" + PARAM_ID
+			+ "}/apk";
 
-    private static final String ROUTE_INFO = ROUTE__BASE + "{" + PARAM_ID + "}";
+	private static final String ROUTE_IMAGE = ROUTE__BASE + "{" + PARAM_ID
+			+ "}/image";
 
-    public static final String FORM_ACTION = "formAction";
+	private static final String ROUTE_INFO = ROUTE__BASE + "{" + PARAM_ID + "}";
 
-    // FIXME move constants out of application class
-    public static final String FORM_ACTION_DELETE = "delete";
+	public static final String FORM_ACTION = "formAction";
 
-    @Override
-    public synchronized Restlet createInboundRoot() {
-        log.debug("Creating new inbound root: " + this);
+	// FIXME move constants out of application class
+	public static final String FORM_ACTION_DELETE = "delete";
 
-        Router router = new Router(getContext());
+	@Override
+	public synchronized Restlet createInboundRoot() {
+		log.debug("Creating new inbound root: " + this);
 
-        // Defines a route for the resource elevation
-        router.attach("", InfoResource.class);
-        router.attach(ROUTE__BASE, InfoResource.class);
-        router.attach(ROUTE_INFO, InfoResource.class);
-        router.attach(ROUTE_INFO + "/", InfoResource.class);
-        // router.attach(ROUTE_INFO + "/" + ROUTE_UPLOAD, InfoResource.class);
-        router.attach(ROUTE_INFO + "/" + FORM_ACTION, InfoResource.class);
-        router.attach(ROUTE_APK, ApkFileResource.class);
-        router.attach(ROUTE_APK + "/", ApkFileResource.class);
+		Router router = new Router(getContext());
 
-        return router;
-    }
+		// Defines a route for the resource elevation
+		router.attach("", InfoResource.class);
+		router.attach(ROUTE__BASE, InfoResource.class);
+		router.attach(ROUTE_INFO, InfoResource.class);
+		router.attach(ROUTE_INFO + "/", InfoResource.class);
+		// router.attach(ROUTE_INFO + "/" + ROUTE_UPLOAD, InfoResource.class);
+		router.attach(ROUTE_INFO + "/" + FORM_ACTION, InfoResource.class);
+		router.attach(ROUTE_APK, ApkFileResource.class);
+		router.attach(ROUTE_APK + "/", ApkFileResource.class);
+		router.attach(ROUTE_IMAGE, ImageFileResource.class);
+		router.attach(ROUTE_IMAGE + "/", ImageFileResource.class);
+
+		return router;
+	}
 
 }
