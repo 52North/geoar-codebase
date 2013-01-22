@@ -79,12 +79,12 @@ var handleResponse = function(data, status) {
 }
 
 $(document).ready(function() {
-	qrlink = "http://geoviqua.dev.52north.org/geoar/GeoAR.apk"
-	jQuery("#geoar-qrcode").qrcode({
-		width : 64,
-		height : 64,
-		text : qrlink
-	});
+	//qrlink = "http://geoviqua.dev.52north.org/geoar/GeoAR.apk"
+	//jQuery("#geoar-qrcode").qrcode({
+	//	width : 64,
+	//	height : 64,
+	//	text : qrlink
+	//});
 
 	urlBasisString = $("#serviceUrl").text();
 	indexJson = urlBasisString + "/codebase";

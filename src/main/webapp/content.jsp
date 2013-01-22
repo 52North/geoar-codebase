@@ -30,7 +30,9 @@
 
 <p>GeoAR is an Open Source Augmented Reality Browser, see <a href="https://wiki.52north.org/bin/view/Projects/GeoAR" title="GeoAR">GeoAR Website</a>.</p>
 
+<!--
 <p>Download GeoAR:<br /><span id="geoar-qrcode"></span></p>
+-->
 
 <h2>Datasources</h2>
 <div id="datasources">

@@ -77,8 +77,6 @@ public class InfoResource extends ServerResource {
 
 	private static final String GEOAR_IMAGE_NAME = "icon.png";
 
-	private static final String CODEBASE_PATH_CONTEXT_PARAM = "codebase";
-
 	public static final String FORM_INPUT_DESCRIPTION = "descriptionOfResource";
 
 	public static final String FORM_INPUT_FILE = "fileOfResource";
@@ -94,10 +92,6 @@ public class InfoResource extends ServerResource {
 	private static final String MSG_NO_RESULT = "No results matching your input!";
 
 	private static final String SERVICE_INFO_CONTEXT_PARAM = "serviceInfo";
-
-	private static final String SERVICE_URL_CONTEXT_PARAM = "serviceUrl";
-
-	private static final String URL_APK_PATH = "apk";
 
 	public static final Object FORM_INPUT_IDENTIFIER = "identifierOfResource";
 
