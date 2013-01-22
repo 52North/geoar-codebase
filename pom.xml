@@ -4,8 +4,8 @@
 	<groupId>org.n52.android</groupId>
 	<artifactId>52n-geoar-codebase</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.2</version>
-	<name>52°North GeoAR Codebase</name>
+	<version>0.1</version>
+	<name>GeoAR Codebase</name>
 
 	<description>A codebase for GeoAR data sources.</description>
 
