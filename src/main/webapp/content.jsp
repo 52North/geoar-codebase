@@ -41,7 +41,7 @@
 
 <h2>Service Interface</h2>
 
-<p>The RESTish service interface of 52°North Elevatar Service uses
+<p>The REST(ish) service interface of 52°North Elevatar Service uses
 	the following URL pattern:</p>
 
 <pre><%=getServletContext().getInitParameter("serviceUrl")%>/codebase/&lt;id&gt;/{apk}</pre>

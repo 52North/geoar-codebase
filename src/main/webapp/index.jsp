@@ -51,36 +51,6 @@
 							class="menu-item0 first-item" id="menu1"
 							title="GeoViQua Test Server"><span class="menu-title">GeoViQua
 									Test Server</span></a></li>
-						<%
-						    /*
-																	<li><a href="http://52north.org/communities/sensorweb/"
-																	class="menu-item0 first-item" id="menu1"
-																	title="Sensor Web Community"><span class="menu-title">Sensor
-																			Web Community</span></a></li>
-
-																	<li><a href="http://52north.org/communities/geostatistics/"
-																	class="menu-item1" id="menu2" title="Geostatistics Community"><span
-																		class="menu-title">Geostatistics Community</span></a></li>
-																	<li class="menu-item1"><a
-																	href="https://wiki.52north.org/bin/view/Geostatistics/GeoViQua"
-																	class="menu-item2" id="menu3" title="GeoViQua Wiki"><span
-																		class="menu-title">GeoViQua Wiki</span></a></li>
-																	
-																										<li class="havechild"><a
-																											href="http://bugzilla.52north.org/buglist.cgi?product=52N+Sensor+Web&amp;bug_status=__open__"
-																											class="menu-item3" id="menu4" title="Bugzilla"><span
-																												class="menu-title">Bugzilla</span></a>
-																											<ul>
-																												<li><a
-																													href="https://bugzilla.52north.org/buglist.cgi?product=52N%20Sensor%20Web&amp;component=Discovery&amp;resolution=---"
-																													class=" first-item" id="menu41" title="ArcGIS SOS Adapter"><span
-																														class="menu-title">Sensor Web Discovery</span></a></li>
-																												<li class="havesubchild"><a
-																													href="https://bugzilla.52north.org/buglist.cgi?product=52N%20Sensor%20Web&amp;component=SOS&amp;resolution=---"
-																													id="menu42" title="SOS"><span class="menu-title">SOS</span></a></li>
-																											</ul></li>
-									 */
-						%>
 						<li class="menu-item4"><a href="http://52north.org/"
 							class="menu-item4" id="menu5" title="52&deg;North Initiative"><span
 								class="menu-title">52&deg;North Initiative</span></a></li>
