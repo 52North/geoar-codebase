@@ -226,17 +226,26 @@ public class CodebaseDatabase {
 		if (this.resources.containsKey(id)) {
 			this.resources.remove(id);
 
-			String path = CodebaseProperties.getInstance().getApkPath(id);
-			File apkFile = new File(path);
+			File apkFile = new File(CodebaseProperties.getInstance().getApkPath(id));
 
 			if (!apkFile.exists())
 				log.error("Cannot delete non-existing file {}", apkFile);
 			else {
-				delete = apkFile.delete();
-				if (!delete)
+				if (!apkFile.delete())
 					log.error("Error deleting file {}", apkFile);
 				else
 					log.debug("Deleted file {}", apkFile);
+			}
+			
+			File imageFile = new File(CodebaseProperties.getInstance().getImagePath(id));
+
+			if (!imageFile.exists())
+				log.error("Cannot delete non-existing file {}", imageFile);
+			else {
+				if (!imageFile.delete())
+					log.error("Error deleting file {}", imageFile);
+				else
+					log.debug("Deleted file {}", imageFile);
 			}
 		} else
 			log.warn("Trying to delete non-existent resource {}", id);

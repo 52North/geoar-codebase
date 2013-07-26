@@ -516,7 +516,7 @@ public class InfoResource extends ServerResource {
 						.getDeleteToken()))
 			this.deleteAuthorized = true;
 		log.debug("Delete authorized: {}",
-				Boolean.valueOf(this.uploadAuthorized));
+				Boolean.valueOf(this.deleteAuthorized));
 
 		// if there is no id given, then return all! > simply return
 		// codebase/index.json file!

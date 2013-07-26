@@ -46,7 +46,7 @@ public class CodebaseApplication extends Application {
 
 	private static final String ROUTE_APK = ROUTE__BASE + "{" + PARAM_ID
 			+ "}/apk";
-
+	
 	private static final String ROUTE_IMAGE = ROUTE__BASE + "{" + PARAM_ID
 			+ "}/image";
 
@@ -74,6 +74,7 @@ public class CodebaseApplication extends Application {
 		router.attach(ROUTE_APK + "/", ApkFileResource.class);
 		router.attach(ROUTE_IMAGE, ImageFileResource.class);
 		router.attach(ROUTE_IMAGE + "/", ImageFileResource.class);
+		
 
 		return router;
 	}
