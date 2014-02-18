@@ -17,8 +17,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:svn:https://svn.52north.org/svn/geostatistics/main/geoviqua/52n-geoar-codebase/trunk</connection>
-		<url>https://svn.52north.org/cgi-bin/viewvc.cgi/?root=geostatistics</url>
+		<!-- We use the fork & pull development model: https://help.github.com/articles/using-pull-requests -->
+		<connection>scm:git:git://github.com/52North/geoar-codebase.git</connection>
+		<url>https://github.com/52North/geoar-codebase</url>
 	</scm>
 
 	<licenses>
