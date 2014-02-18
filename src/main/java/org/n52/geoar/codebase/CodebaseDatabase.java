@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ar.geoarCodebase;
+package org.n52.geoar.codebase;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,10 +38,10 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.n52.ar.geoarCodebase.ds.Datasource;
-import org.n52.ar.geoarCodebase.ds.DatasourcesIndex;
-import org.n52.ar.geoarCodebase.util.CodebaseProperties;
-import org.n52.ar.geoarCodebase.util.MapperFactory;
+import org.n52.geoar.codebase.ds.Datasource;
+import org.n52.geoar.codebase.ds.DatasourcesIndex;
+import org.n52.geoar.codebase.util.CodebaseProperties;
+import org.n52.geoar.codebase.util.MapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,14 +22,14 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ar.geoarCodebase.resources;
+package org.n52.geoar.codebase.resources;
 
 import java.io.File;
 import java.util.Map;
 
-import org.n52.ar.geoarCodebase.CodebaseApplication;
-import org.n52.ar.geoarCodebase.CodebaseDatabase;
-import org.n52.ar.geoarCodebase.util.CodebaseProperties;
+import org.n52.geoar.codebase.CodebaseApplication;
+import org.n52.geoar.codebase.CodebaseDatabase;
+import org.n52.geoar.codebase.util.CodebaseProperties;
 import org.restlet.data.Disposition;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;

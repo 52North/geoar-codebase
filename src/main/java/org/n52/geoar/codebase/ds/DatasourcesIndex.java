@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ar.geoarCodebase.ds;
+package org.n52.geoar.codebase.ds;
 
 import java.util.Collection;
 

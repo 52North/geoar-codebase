@@ -22,11 +22,11 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ar.geoarCodebase.util;
+package org.n52.geoar.codebase.util;
 
-import org.n52.ar.geoarCodebase.CodebaseApplication;
-import org.n52.ar.geoarCodebase.ds.Datasource;
-import org.n52.ar.geoarCodebase.resources.InfoResource;
+import org.n52.geoar.codebase.CodebaseApplication;
+import org.n52.geoar.codebase.ds.Datasource;
+import org.n52.geoar.codebase.resources.InfoResource;
 
 public class HtmlHelper {
 

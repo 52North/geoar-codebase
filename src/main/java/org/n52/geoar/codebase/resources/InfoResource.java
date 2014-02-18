@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.ar.geoarCodebase.resources;
+package org.n52.geoar.codebase.resources;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,11 +46,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FilenameUtils;
-import org.n52.ar.geoarCodebase.CodebaseApplication;
-import org.n52.ar.geoarCodebase.CodebaseDatabase;
-import org.n52.ar.geoarCodebase.ds.Datasource;
-import org.n52.ar.geoarCodebase.util.CodebaseProperties;
-import org.n52.ar.geoarCodebase.util.HtmlHelper;
+import org.n52.geoar.codebase.CodebaseApplication;
+import org.n52.geoar.codebase.CodebaseDatabase;
+import org.n52.geoar.codebase.ds.Datasource;
+import org.n52.geoar.codebase.util.CodebaseProperties;
+import org.n52.geoar.codebase.util.HtmlHelper;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;

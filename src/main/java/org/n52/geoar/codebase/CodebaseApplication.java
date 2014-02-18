@@ -22,11 +22,11 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.ar.geoarCodebase;
+package org.n52.geoar.codebase;
 
-import org.n52.ar.geoarCodebase.resources.ApkFileResource;
-import org.n52.ar.geoarCodebase.resources.ImageFileResource;
-import org.n52.ar.geoarCodebase.resources.InfoResource;
+import org.n52.geoar.codebase.resources.ApkFileResource;
+import org.n52.geoar.codebase.resources.ImageFileResource;
+import org.n52.geoar.codebase.resources.InfoResource;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
