@@ -1,9 +1,33 @@
-   =========================================================================
-   ==  Example NOTICE file for use with the Apache License, Version 2.0,  ==
-   ==  in this case for the 52°North GeoAR Codebase.                      ==
-   =========================================================================
+Copyright 2014 52°North Initiative for Geospatial Open Source Software GmbH
 
-   52° North GeoAR Codebase - a server resource for loading data sources in
-   GeoAR
-   
-   Copyright 2011 52°North Initiative for Geospatial Open Source Software GmbH
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+ 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+This project includes:   Apache Log4j under The Apache Software License, Version 2.0
+  Commons Codec under The Apache Software License, Version 2.0
+  Commons FileUpload under The Apache Software License, Version 2.0
+  Commons IO under The Apache Software License, Version 2.0
+  Commons Logging under The Apache Software License, Version 2.0
+  Data Mapper for Jackson under The Apache Software License, Version 2.0
+  GeoAR Codebase under Apache 2
+  HttpClient under Apache License
+  HttpCore under Apache License
+  Jackson under The Apache Software License, Version 2.0
+  Restlet Core - API and Engine under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Restlet Extension - FileUpload under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Restlet Extension - Jackson under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Restlet Extension - Servlet under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  servlet-api under CDDL 1.1 or GPL2 w/ CPE
+  SLF4J API Module under MIT License
+  SLF4J LOG4J-12 Binding under MIT License
+
